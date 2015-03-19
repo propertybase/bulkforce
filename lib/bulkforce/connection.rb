@@ -3,16 +3,16 @@ class Bulkforce
     attr_reader :raw_request
     attr_reader :raw_result
 
-    def initialize(username, password, api_version, sandbox)
+    def initialize(username, password, api_version, host)
       @username = username
       @password = password
       @api_version = api_version
-      @sandbox = sandbox
+      @host = host
     end
 
     def login
       response = Bulkforce::Http.login(
-        @sandbox,
+        @host,
         @username,
         @password,
         @api_version)
@@ -109,8 +109,8 @@ class Bulkforce
         @api_version)[:id]
     end
 
-    def self.connect(username, password, api_version, sandbox)
-      self.new(username, password, api_version, sandbox).login
+    def self.connect(username, password, api_version, host)
+      self.new(username, password, api_version, host).login
     end
   end
 end

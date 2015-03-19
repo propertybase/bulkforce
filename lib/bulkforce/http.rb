@@ -47,7 +47,7 @@ class Bulkforce
         "X-SFDC-Session" => session_id}
       r = Http::Request.new(
         :post,
-        Http::Request.generic_host(instance),
+        Http::Request.instance_host(instance),
         "/services/async/#{api_version}/job/#{job_id}/batch",
         data,
         headers)
@@ -109,7 +109,7 @@ class Bulkforce
         @headers      = headers
       end
 
-      def self.login sandbox, username, password, api_version
+      def self.login host, username, password, api_version
         body =  %Q{<?xml version="1.0" encoding="utf-8" ?>
         <env:Envelope xmlns:xsd="http://www.w3.org/2001/XMLSchema"
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -127,7 +127,7 @@ class Bulkforce
         }
         Http::Request.new(
           :post,
-          generic_host(sandbox ? "test" : "login"),
+          host,
           "/services/Soap/u/#{api_version}",
           body,
           headers)
@@ -149,7 +149,7 @@ class Bulkforce
           "X-SFDC-Session" => session_id}
         Http::Request.new(
           :post,
-          generic_host(instance),
+          instance_host(instance),
           "/services/async/#{api_version}/job",
           body,
           headers)
@@ -166,7 +166,7 @@ class Bulkforce
           "X-SFDC-Session" => session_id}
         Http::Request.new(
           :post,
-          generic_host(instance),
+          instance_host(instance),
           "/services/async/#{api_version}/job/#{job_id}",
           body,
           headers)
@@ -176,7 +176,7 @@ class Bulkforce
         headers = {"Content-Type" => "text/csv; charset=UTF-8", "X-SFDC-Session" => session_id}
         Http::Request.new(
           :post,
-          generic_host(instance),
+          instance_host(instance),
           "/services/async/#{api_version}/job/#{job_id}/batch",
           data,
           headers)
@@ -186,7 +186,7 @@ class Bulkforce
         headers = {"X-SFDC-Session" => session_id}
         Http::Request.new(
           :get,
-          generic_host(instance),
+          instance_host(instance),
           "/services/async/#{api_version}/job/#{job_id}/batch/#{batch_id}",
           nil,
           headers)
@@ -198,7 +198,7 @@ class Bulkforce
           "X-SFDC-Session" => session_id}
         Http::Request.new(
           :get,
-          generic_host(instance),
+          instance_host(instance),
           "/services/async/#{api_version}/job/#{job_id}/batch/#{batch_id}/result",
           nil,
           headers)
@@ -215,14 +215,14 @@ class Bulkforce
           "X-SFDC-Session" => session_id}
         Http::Request.new(
           :get,
-          generic_host(instance),
+          instance_host(instance),
           "/services/async/#{api_version}" \
             "/job/#{job_id}/batch/#{batch_id}/result/#{result_id}",
           nil,
           headers)
       end
 
-      def self.generic_host prefix
+      def self.instance_host prefix
         "#{prefix}.salesforce.com"
       end
     end

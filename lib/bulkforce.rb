@@ -12,14 +12,14 @@ class Bulkforce
     username: nil,
     password: nil,
     security_token: nil,
-    sandbox: false,
+    host: "login.salesforce.com",
     api_version: SALESFORCE_API_VERSION
   )
     @connection = Bulkforce::Connection.connect(
       username,
       "#{password}#{security_token}",
       api_version,
-      sandbox)
+      host)
   end
 
   def org_id

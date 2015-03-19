@@ -30,5 +30,6 @@ def client
     username: ENV["SALESFORCE_USERNAME"],
     password: ENV["SALESFORCE_PASSWORD"],
     security_token: ENV["SALESFORCE_SECURITY_TOKEN"],
+    host: ENV["SALESFORCE_HOST"],
   )
 end
