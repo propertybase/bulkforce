@@ -2,7 +2,7 @@ require "net/https"
 require "nori"
 require "csv"
 
-module Bulkforce
+class Bulkforce
   module Http
     extend self
 

@@ -1,3 +1,3 @@
-module Bulkforce
+class Bulkforce
   VERSION = "0.1.0"
 end

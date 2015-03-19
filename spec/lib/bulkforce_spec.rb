@@ -1,7 +1,9 @@
 #encoding: utf-8
 require "spec_helper"
 
-describe Bulkforce::Api do
+describe Bulkforce do
+  subject { described_class }
+
   let(:empty_connection) do
     Bulkforce::Connection.new(nil, nil, nil, nil)
   end
@@ -21,7 +23,7 @@ describe Bulkforce::Api do
         expect(Bulkforce::Connection)
           .to receive(:connect)
           .and_return(empty_connection)
-        s = described_class.new(nil, nil)
+        s = subject.new(nil, nil)
         expect(s).to receive(:start_job)
           .with(method_name.to_s, *values)
         s.send(method_name, *values)
@@ -31,7 +33,7 @@ describe Bulkforce::Api do
         expect(Bulkforce::Connection)
           .to receive(:connect)
           .and_return(empty_connection)
-        s = described_class.new(nil, nil)
+        s = subject.new(nil, nil)
         expect(empty_connection).to receive(:create_job).ordered
         expect(empty_connection).to receive(:add_batch).ordered
         expect(empty_connection).to receive(:close_job).ordered
@@ -50,7 +52,7 @@ describe Bulkforce::Api do
           .to receive(:new)
         .and_return(empty_batch)
 
-      s = described_class.new(nil, nil)
+      s = subject.new(nil, nil)
       sobject_input = "sobject_stub"
       query_input = "query_stub"
       expect(empty_connection).to receive(:create_job).ordered
@@ -82,7 +84,7 @@ describe Bulkforce::Api do
             expect(Bulkforce::Connection)
               .to receive(:connect)
               .and_return(empty_connection)
-            s = described_class.new(nil, nil)
+            s = subject.new(nil, nil)
             expect(s).to receive(:start_job)
               .with(method_name.to_s, *values)
             s.send(method_name, *values)
@@ -92,7 +94,7 @@ describe Bulkforce::Api do
             expect(Bulkforce::Connection)
               .to receive(:connect)
               .and_return(empty_connection)
-            s = described_class.new(nil, nil)
+            s = subject.new(nil, nil)
             expect(empty_connection).to receive(:create_job).ordered
             expect(empty_connection).to receive(:add_file_upload_batch).ordered
             expect(empty_connection).to receive(:close_job).ordered

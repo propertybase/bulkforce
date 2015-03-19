@@ -1,4 +1,4 @@
-module Bulkforce
+class Bulkforce
   class Connection
     attr_reader :raw_request
     attr_reader :raw_result

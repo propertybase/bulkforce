@@ -26,7 +26,7 @@ RSpec.configure do |config|
 end
 
 def client
-  Bulkforce::Api.new(
+  Bulkforce.new(
     ENV["SALESFORCE_USERNAME"],
     ENV["SALESFORCE_PASSWORD"] + ENV["SALESFORCE_SECURITY_TOKEN"],
   )

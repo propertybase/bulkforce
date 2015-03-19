@@ -1,6 +1,6 @@
 require "csv"
 
-module Bulkforce
+class Bulkforce
   module Helper
     extend self
 

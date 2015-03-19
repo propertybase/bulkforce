@@ -1,4 +1,4 @@
-module Bulkforce
+class Bulkforce
   class Batch
     attr_reader :job_id
 
