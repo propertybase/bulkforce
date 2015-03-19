@@ -8,10 +8,16 @@ require "zip"
 class Bulkforce
   SALESFORCE_API_VERSION = "28.0"
 
-  def initialize(username, password, sandbox = false, api_version = SALESFORCE_API_VERSION)
+  def initialize(
+    username: nil,
+    password: nil,
+    security_token: nil,
+    sandbox: false,
+    api_version: SALESFORCE_API_VERSION
+  )
     @connection = Bulkforce::Connection.connect(
       username,
-      password,
+      "#{password}#{security_token}",
       api_version,
       sandbox)
   end

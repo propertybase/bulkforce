@@ -3,6 +3,7 @@ require "spec_helper"
 
 describe Bulkforce do
   subject { described_class }
+  let(:client) { subject.new(username: nil, password: nil, security_token: nil) }
 
   let(:empty_connection) do
     Bulkforce::Connection.new(nil, nil, nil, nil)
@@ -23,7 +24,7 @@ describe Bulkforce do
         expect(Bulkforce::Connection)
           .to receive(:connect)
           .and_return(empty_connection)
-        s = subject.new(nil, nil)
+        s = client
         expect(s).to receive(:start_job)
           .with(method_name.to_s, *values)
         s.send(method_name, *values)
@@ -33,7 +34,7 @@ describe Bulkforce do
         expect(Bulkforce::Connection)
           .to receive(:connect)
           .and_return(empty_connection)
-        s = subject.new(nil, nil)
+        s = client
         expect(empty_connection).to receive(:create_job).ordered
         expect(empty_connection).to receive(:add_batch).ordered
         expect(empty_connection).to receive(:close_job).ordered
@@ -52,7 +53,7 @@ describe Bulkforce do
           .to receive(:new)
         .and_return(empty_batch)
 
-      s = subject.new(nil, nil)
+      s = client
       sobject_input = "sobject_stub"
       query_input = "query_stub"
       expect(empty_connection).to receive(:create_job).ordered
@@ -84,7 +85,7 @@ describe Bulkforce do
             expect(Bulkforce::Connection)
               .to receive(:connect)
               .and_return(empty_connection)
-            s = subject.new(nil, nil)
+            s = client
             expect(s).to receive(:start_job)
               .with(method_name.to_s, *values)
             s.send(method_name, *values)
@@ -94,7 +95,7 @@ describe Bulkforce do
             expect(Bulkforce::Connection)
               .to receive(:connect)
               .and_return(empty_connection)
-            s = subject.new(nil, nil)
+            s = client
             expect(empty_connection).to receive(:create_job).ordered
             expect(empty_connection).to receive(:add_file_upload_batch).ordered
             expect(empty_connection).to receive(:close_job).ordered

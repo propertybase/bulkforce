@@ -27,7 +27,8 @@ end
 
 def client
   Bulkforce.new(
-    ENV["SALESFORCE_USERNAME"],
-    ENV["SALESFORCE_PASSWORD"] + ENV["SALESFORCE_SECURITY_TOKEN"],
+    username: ENV["SALESFORCE_USERNAME"],
+    password: ENV["SALESFORCE_PASSWORD"],
+    security_token: ENV["SALESFORCE_SECURITY_TOKEN"],
   )
 end
