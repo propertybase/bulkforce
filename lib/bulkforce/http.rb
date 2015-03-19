@@ -86,7 +86,7 @@ class Bulkforce
     end
 
     def process_soap_response res
-      raw_result = res.fetch(:body){res.fetch(:envelope).fetch(:body)}
+      raw_result = res.fetch(:body){ res.fetch(:envelope).fetch(:body) }
       raise raw_result[:fault][:faultstring] if raw_result[:fault]
 
       login_result = raw_result[:login_response][:result]
