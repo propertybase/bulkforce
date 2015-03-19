@@ -6,7 +6,7 @@ require "bulkforce/connection"
 require "zip"
 
 class Bulkforce
-  SALESFORCE_API_VERSION = "28.0"
+  SALESFORCE_API_VERSION = "33.0"
 
   def initialize(
     username: nil,
