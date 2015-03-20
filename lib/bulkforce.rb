@@ -15,6 +15,7 @@ class Bulkforce
     host: "login.salesforce.com",
     api_version: SALESFORCE_API_VERSION
   )
+    warn("WARNING: You are submitting credentials to a host other than salesforce.com") unless host =~ /salesforce.com\/?$/
     @connection = Bulkforce::Connection.connect(
       username,
       "#{password}#{security_token}",
