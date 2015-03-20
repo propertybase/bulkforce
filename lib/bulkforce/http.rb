@@ -222,8 +222,8 @@ class Bulkforce
           headers)
       end
 
-      def self.instance_host prefix
-        "#{prefix}.salesforce.com"
+      def self.instance_host instance
+        "#{instance}.salesforce.com"
       end
     end
   end
