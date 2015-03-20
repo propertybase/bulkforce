@@ -2,6 +2,7 @@ require "bulkforce/version"
 require "bulkforce/helper"
 require "bulkforce/batch"
 require "bulkforce/http"
+require "bulkforce/connection_builder"
 require "bulkforce/connection"
 require "zip"
 
@@ -16,11 +17,13 @@ class Bulkforce
     api_version: SALESFORCE_API_VERSION
   )
     warn("WARNING: You are submitting credentials to a host other than salesforce.com") unless host =~ /salesforce.com\/?$/
-    @connection = Bulkforce::Connection.connect(
-      username,
-      "#{password}#{security_token}",
-      api_version,
-      host)
+    @connection = Bulkforce::ConnectionBuilder.new(
+      username: username,
+      password: password,
+      security_token: security_token,
+      host: host,
+      api_version: api_version,
+    ).build
   end
 
   def org_id

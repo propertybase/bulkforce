@@ -6,11 +6,15 @@ describe Bulkforce do
   let(:client) { subject.new(username: nil, password: nil, security_token: nil) }
 
   let(:empty_connection) do
-    Bulkforce::Connection.new(nil, nil, nil, nil)
+    Bulkforce::Connection.new({session_id: "org_id!session_id", api_version: "33.0", instance: "eu2"})
   end
 
   let(:empty_batch) do
     Object.new
+  end
+
+  before(:each) do
+    allow_any_instance_of(Bulkforce::ConnectionBuilder).to receive(:build).and_return(empty_connection)
   end
 
   {
@@ -21,9 +25,6 @@ describe Bulkforce do
   }.each do |method_name, values|
     describe "##{method_name}" do
       it "delegates to #start_job" do
-        expect(Bulkforce::Connection)
-          .to receive(:connect)
-          .and_return(empty_connection)
         s = client
         expect(s).to receive(:start_job)
           .with(method_name.to_s, *values)
@@ -31,9 +32,6 @@ describe Bulkforce do
       end
 
       it "triggers correct workflow" do
-        expect(Bulkforce::Connection)
-          .to receive(:connect)
-          .and_return(empty_connection)
         s = client
         expect(empty_connection).to receive(:create_job).ordered
         expect(empty_connection).to receive(:add_batch).ordered
@@ -46,9 +44,6 @@ describe Bulkforce do
 
   describe "#query" do
     it "triggers correct workflow" do
-        expect(Bulkforce::Connection)
-          .to receive(:connect)
-          .and_return(empty_connection)
         expect(Bulkforce::Batch)
           .to receive(:new)
         .and_return(empty_batch)
@@ -82,9 +77,6 @@ describe Bulkforce do
       }.each do |method_name, values|
         describe "##{method_name}" do
           it "delegates to #start_job" do
-            expect(Bulkforce::Connection)
-              .to receive(:connect)
-              .and_return(empty_connection)
             s = client
             expect(s).to receive(:start_job)
               .with(method_name.to_s, *values)
@@ -92,9 +84,6 @@ describe Bulkforce do
           end
 
           it "triggers correct workflow" do
-            expect(Bulkforce::Connection)
-              .to receive(:connect)
-              .and_return(empty_connection)
             s = client
             expect(empty_connection).to receive(:create_job).ordered
             expect(empty_connection).to receive(:add_file_upload_batch).ordered

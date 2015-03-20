@@ -2,7 +2,17 @@
 require "spec_helper"
 
 describe Bulkforce::Connection do
-  let(:subject) { described_class.new nil, nil, nil, nil }
+  let(:subject) do
+    described_class.new(
+      session_id: session_id,
+      instance: instance,
+      api_version: api_version,
+    )
+  end
+
+  let(:session_id) { "org_id!session_id" }
+  let(:instance) { "eu2" }
+  let(:api_version) { "33.0" }
 
   {
     login: 0,
@@ -32,19 +42,13 @@ describe Bulkforce::Connection do
   end
 
   describe "#org_id" do
-    it "raises exception when not logged in" do
-      expect {subject.org_id}.to raise_error(RuntimeError)
-    end
+    let(:org_id) { "00D50000000IehZ" }
+    let(:session_id) { "#{org_id}!AQcAQH0dMHZfz972Szmpkb58urFRkgeBGsxL_QJWwYMfAbUeeG7c1E6LYUfiDUkWe6H34r1AAwOR8B8fLEz6n04NPGRrq0FM" }
 
-    it "returns correct OrgId after login" do
-      org_id = "00D50000000IehZ"
-      expect(Bulkforce::Http)
-      .to receive(:login)
-      .and_return({session_id: "#{org_id}!AQcAQH0dMHZfz972Szmpkb58urFRkgeBGsxL_QJWwYMfAbUeeG7c1E6LYUfiDUkWe6H34r1AAwOR8B8fLEz6n04NPGRrq0FM"})
-      expect(subject.login.org_id).to eq(org_id)
+    it "returns correct OrgId" do
+      expect(subject.org_id).to eq(org_id)
     end
   end
-
 
   describe "#add_batch" do
     it "delegates correctly to underlying classes" do
@@ -74,7 +78,7 @@ describe Bulkforce::Connection do
       let(:single_result) {{:result=>"M75200000001Vgt", :@xmlns=>"http://www.force.com/2009/06/asyncapi/dataload"}}
       it "returns the result_id as a string" do
         expect(Bulkforce::Http).to receive(:query_batch_result_id).
-          with(nil, nil, job_id, batch_id, nil).
+          with(instance, session_id, job_id, batch_id, api_version).
           and_return(single_result)
 
         expect(subject.query_batch_result_id(job_id, batch_id)).to eq(single_result)
@@ -83,9 +87,9 @@ describe Bulkforce::Connection do
 
     context "with an array of page of results" do
       let(:multiple_result) {{:result=>["752M00000001Vgt", "752M00000001Vgy"], :@xmlns=>"http://www.force.com/2009/06/asyncapi/dataload"}}
-      it "returns the resu lt_id as a string" do
+      it "returns the result_id as a string" do
         expect(Bulkforce::Http).to receive(:query_batch_result_id).
-          with(nil, nil, job_id, batch_id, nil).
+          with(instance, session_id, job_id, batch_id, api_version).
           and_return(multiple_result)
 
         expect(subject.query_batch_result_id(job_id, batch_id)).to eq(multiple_result)

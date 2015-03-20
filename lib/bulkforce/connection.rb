@@ -3,11 +3,10 @@ class Bulkforce
     attr_reader :raw_request
     attr_reader :raw_result
 
-    def initialize(username, password, api_version, host)
-      @username = username
-      @password = password
+    def initialize(session_id:, instance:, api_version:)
       @api_version = api_version
-      @host = host
+      @session_id = session_id
+      @instance = instance
     end
 
     def login
@@ -23,7 +22,6 @@ class Bulkforce
     end
 
     def org_id
-      raise "please login first" unless @session_id
       @session_id.split("!").first
     end
 
