@@ -1,7 +1,7 @@
 #encoding: utf-8
 require "spec_helper"
 
-describe "Delete Update", type: :integration do
+describe "Bulk Delete", type: :integration do
   before(:context) do
     @result = delete_contacts
   end
