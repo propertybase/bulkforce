@@ -1,4 +1,5 @@
 require "bulkforce/version"
+require "bulkforce/configuration"
 require "bulkforce/helper"
 require "bulkforce/batch"
 require "bulkforce/http"
@@ -9,21 +10,19 @@ require "zip"
 class Bulkforce
   SALESFORCE_API_VERSION = "33.0"
 
-  def initialize(
-    username: nil,
-    password: nil,
-    security_token: nil,
-    host: "login.salesforce.com",
-    api_version: SALESFORCE_API_VERSION
-  )
-    warn("WARNING: You are submitting credentials to a host other than salesforce.com") unless host =~ /salesforce.com\/?$/
-    @connection = Bulkforce::ConnectionBuilder.new(
-      username: username,
-      password: password,
-      security_token: security_token,
-      host: host,
-      api_version: api_version,
-    ).build
+  class << self
+    attr_accessor :configuration
+  end
+
+  def initialize(options = {})
+    configuration = self.class.configuration || Configuration.new
+    merged_opts = configuration.to_h.merge(options)
+
+    unless merged_opts[:host] =~ /salesforce.com\/?$/
+      warn("WARNING: You are submitting credentials to a host other than salesforce.com")
+    end
+
+    @connection = Bulkforce::ConnectionBuilder.new(merged_opts).build
   end
 
   def org_id
@@ -56,6 +55,11 @@ class Bulkforce
     @connection.close_job job_id
     batch_reference = Bulkforce::Batch.new @connection, job_id, batch_id
     batch_reference.final_status
+  end
+
+  def self.configure(&block)
+    self.configuration = Configuration.new
+    block.call(self.configuration)
   end
 
   private
