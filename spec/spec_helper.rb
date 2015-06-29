@@ -10,8 +10,6 @@ require "dotenv"
 require "bulkforce"
 require "webmock/rspec"
 
-Dotenv.load
-
 Dir["./spec/support/**/*.rb"].each { |f| require f }
 
 RSpec.configure do |config|
@@ -20,7 +18,13 @@ RSpec.configure do |config|
   config.filter_run_excluding skip: true
 
   config.include Integration::Operations, type: :integration
-  config.before(:context, type: :integration) do
+
+  config.before(:each) do
+    ENV.delete_if {|k| k =~ /^SALESFORCE_/}
+  end
+
+  config.before(:example, type: :integration) do
+    Dotenv.load
     WebMock.disable!
   end
 end

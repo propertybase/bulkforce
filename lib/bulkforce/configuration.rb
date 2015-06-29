@@ -5,6 +5,8 @@ class Bulkforce
     attr_accessor :password
     attr_accessor :security_token
     attr_accessor :host
+    attr_accessor :session_id
+    attr_accessor :instance
 
     def initialize
       @api_version = ENV["SALESFORCE_API_VERSION"] || "33.0"
@@ -12,6 +14,8 @@ class Bulkforce
       @password = ENV["SALESFORCE_PASSWORD"]
       @security_token = ENV["SALESFORCE_SECURITY_TOKEN"]
       @host = ENV["SALESFORCE_HOST"] || "login.salesforce.com"
+      @session_id = ENV["SALESFORCE_SESSION_ID"]
+      @instance = ENV["SALESFORCE_INSTANCE"]
     end
 
     def to_h
@@ -21,7 +25,9 @@ class Bulkforce
         password: password,
         security_token: security_token,
         host: host,
-      }
+        session_id: session_id,
+        instance: instance,
+      }.reject { |_, v| v.nil? }.to_h
     end
   end
 end
