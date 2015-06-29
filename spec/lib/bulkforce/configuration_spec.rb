@@ -4,24 +4,26 @@ require "spec_helper"
 describe Bulkforce::Configuration do
   subject { described_class.new }
 
+  before(:each) { ENV.delete_if {|k| k =~ /^SALESFORCE_/} }
+
   context "api_version" do
-    include_examples "configuration settings", name: :api_version, expected_default: "33.0"
+    include_examples "configuration settings", name: :api_version, expected_default: "33.0", env_variable: "SALESFORCE_API_VERSION"
   end
 
   context "username" do
-    include_examples "configuration settings", name: :username, expected_default: nil
+    include_examples "configuration settings", name: :username, expected_default: nil, env_variable: "SALESFORCE_USERNAME"
   end
 
   context "password" do
-    include_examples "configuration settings", name: :password, expected_default: nil
+    include_examples "configuration settings", name: :password, expected_default: nil, env_variable: "SALESFORCE_PASSWORD"
   end
 
   context "security_token" do
-    include_examples "configuration settings", name: :security_token, expected_default: nil
+    include_examples "configuration settings", name: :security_token, expected_default: nil, env_variable: "SALESFORCE_SECURITY_TOKEN"
   end
 
   context "host" do
-    include_examples "configuration settings", name: :host, expected_default: "login.salesforce.com"
+    include_examples "configuration settings", name: :host, expected_default: "login.salesforce.com", env_variable: "SALESFORCE_HOST"
   end
 
   describe "#to_h" do

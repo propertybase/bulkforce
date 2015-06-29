@@ -7,8 +7,11 @@ class Bulkforce
     attr_accessor :host
 
     def initialize
-      @api_version = "33.0"
-      @host = "login.salesforce.com"
+      @api_version = ENV["SALESFORCE_API_VERSION"] || "33.0"
+      @username = ENV["SALESFORCE_USERNAME"]
+      @password = ENV["SALESFORCE_PASSWORD"]
+      @security_token = ENV["SALESFORCE_SECURITY_TOKEN"]
+      @host = ENV["SALESFORCE_HOST"] || "login.salesforce.com"
     end
 
     def to_h
