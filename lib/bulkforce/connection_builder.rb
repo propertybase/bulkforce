@@ -18,19 +18,21 @@ class Bulkforce
           session_id: credentials[:session_id],
           instance: credentials.fetch(:instance),
         }
+      elsif credentials[:refresh_token]
+        Bulkforce::Http.oauth_login(
+          host,
+          credentials.fetch(:client_id),
+          credentials.fetch(:client_secret),
+          credentials[:refresh_token]
+        )
       else
-        response = Bulkforce::Http.login(
+        Bulkforce::Http.login(
           host,
           credentials.fetch(:username),
           "#{credentials.fetch(:password)}#{credentials.fetch(:security_token)}",
           api_version
         )
-
-        {
-          session_id: response[:session_id],
-          instance: response[:instance],
-        }
-      end
+      end.select { |k, _|  [:session_id, :instance].include?(k) }.to_h
 
       Bulkforce::Connection.new(base_options.merge(session_options))
     end

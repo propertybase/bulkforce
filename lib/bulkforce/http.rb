@@ -11,6 +11,11 @@ class Bulkforce
       process_soap_response(nori.parse(process_http_request(r)))
     end
 
+    def oauth_login *args
+      r = Http::Request.oauth_login(*args)
+      process_oauth_response(nori.parse(process_http_request(r)))
+    end
+
     def create_job *args
       r = Http::Request.create_job(*args)
       process_xml_response(nori.parse(process_http_request(r)))
@@ -94,6 +99,20 @@ class Bulkforce
       login_result.merge(instance: instance)
     end
 
+    def process_oauth_response res
+      inner = res.fetch(:o_auth)
+
+      if inner[:error]
+        raise "#{inner[:error]}: #{inner[:error_description]}"
+      end
+
+      {
+        server_url: inner.fetch(:instance_url),
+        session_id: inner.fetch(:access_token),
+        instance: Helper.fetch_instance_from_server_url(inner.fetch(:instance_url)),
+      }
+    end
+
     class Request
       attr_reader :path
       attr_reader :host
@@ -129,6 +148,29 @@ class Bulkforce
           :post,
           host,
           "/services/Soap/u/#{api_version}",
+          body,
+          headers)
+      end
+
+      def self.oauth_login(host, client_id, client_secret, refresh_token)
+        headers = {
+          "Content-Type" => "application/x-www-form-urlencoded",
+          "Accept" => "application/xml",
+        }
+
+        body = {
+          grant_type: "refresh_token",
+          client_id: client_id,
+          client_secret: client_secret,
+          refresh_token: refresh_token
+        }.inject("") do |string, (k,v)|
+          string += "#{k}=#{v}&"
+        end
+
+        Http::Request.new(
+          :post,
+          host,
+          "/services/oauth2/token",
           body,
           headers)
       end

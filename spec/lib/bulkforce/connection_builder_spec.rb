@@ -9,6 +9,7 @@ describe Bulkforce::ConnectionBuilder do
 
     before(:each) do
       allow(Bulkforce::Http).to receive(:login).and_return(session_id: "org_id!session_id", instance: "eu2")
+      allow(Bulkforce::Http).to receive(:oauth_login).and_return(session_id: "org_id!session_id", instance: "eu2")
     end
 
     let(:host) { "login.salesforce.com" }
@@ -68,6 +69,39 @@ describe Bulkforce::ConnectionBuilder do
       it "does not trigger HTTP login workflow" do
         subject.build
         expect(Bulkforce::Http).not_to have_received(:login)
+      end
+
+      it "builds connection with correct attributes", :aggregate_failures do
+        expect(connection.instance_variable_get("@session_id")).to eq(session_id)
+        expect(connection.instance_variable_get("@instance")).to eq(instance)
+        expect(connection.instance_variable_get("@api_version")).to eq(api_version)
+      end
+    end
+
+    context "oauth refresh token" do
+      let(:options) do
+        {
+          host: host,
+          client_id: client_id,
+          client_secret: client_secret,
+          refresh_token: refresh_token,
+          api_version: api_version,
+        }
+      end
+
+      let(:client_id) { "3MVG9lKcPoNINVBIPJjdw1J9LLM82HnFVVX19KY1uA5mu0QqEWhqKpoW3svG3XHrXDiCQjK1mdgAvhCscA9GE&client_secret=1955279925675241571" }
+      let(:client_secret) { "3MVG9lKcPoNINVBIPJjdw1J9LLM82HnFVVX19KY1uA5mu0QqEWhqKpoW3svG3XHrXDiCQjK1mdgAvhCscA9GE&client_secret=1955279925675241571" }
+      let(:refresh_token) { "Ytwns3AKGIlTka3v9f6Md4kvZsMA9xNgMqVWdaNvBkfUaE7N6TbyVGEZ5eazoHJsa9RVgC5YvdbmPGeSZQNe3A" }
+
+      it "returns a connection" do
+        expect(connection).to be_a(Bulkforce::Connection)
+      end
+
+      it "triggers login with username, password and security token" do
+        subject.build
+        expect(Bulkforce::Http).
+          to have_received(:oauth_login).
+          with(host, client_id, client_secret, refresh_token)
       end
 
       it "builds connection with correct attributes", :aggregate_failures do

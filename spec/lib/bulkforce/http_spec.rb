@@ -28,7 +28,7 @@ describe Bulkforce::Http do
     end
   end
 
-  describe "#create_login" do
+  describe "#login" do
     let(:login_error_message) do
       "INVALID_LOGIN: Invalid username, password, security token;" \
       "or user locked out."
@@ -157,6 +157,47 @@ describe Bulkforce::Http do
         expect(result).to have_key(:server_url)
         expect(result[:instance]).to eq(sf_instance)
       end
+    end
+  end
+
+  describe "#oauth_login" do
+    let(:login_error) do
+      %Q{<OAuth>
+          <error_description>invalid client credentials</error_description>
+          <error>invalid_client</error>
+        </OAuth>}
+    end
+
+    let(:login_error_message) { "invalid_client: invalid client credentials" }
+
+    let(:sf_instance) {"eu2"}
+
+    let(:login_success) do
+      %Q{<OAuth>
+          <id>https://login.salesforce.com/id/00Db0000000bHH3EAM/005b0000000K44BAAS</id>
+          <issued_at>1435621555861</issued_at>
+          <scope>full</scope>
+          <instance_url>https://eu2.salesforce.com</instance_url>
+          <token_type>Bearer</token_type>
+          <signature>mbfZerj8DRVXVF9WD28kM/p8j6d74fE29RRGleTxELE=</signature>
+          <access_token>00Db0000000bHH3!AREAQFjvfelEv7D6TM3QqoqhWAJ52sUPSw.yMuIJ0x4NExqxey7xwvezoTG6DgUypEp8.FW_l6LdyK.viB4kxZY.Tn63oRP5</access_token>
+        </OAuth>}
+    end
+
+    it "raises an error for faulty login" do
+      expect(Bulkforce::Http).to receive(:process_http_request)
+        .and_return(login_error)
+      expect{ Bulkforce::Http.oauth_login("a","b","c", "d") }
+        .to raise_error(RuntimeError, login_error_message)
+    end
+
+    it "returns hash for correct login" do
+      expect(Bulkforce::Http).to receive(:process_http_request).and_return(login_success)
+      result = Bulkforce::Http.oauth_login("a","b","c", "d")
+      expect(result).to be_a(Hash)
+      expect(result).to have_key(:session_id)
+      expect(result).to have_key(:server_url)
+      expect(result[:instance]).to eq(sf_instance)
     end
   end
 

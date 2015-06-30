@@ -7,6 +7,9 @@ class Bulkforce
     attr_accessor :host
     attr_accessor :session_id
     attr_accessor :instance
+    attr_accessor :client_id
+    attr_accessor :client_secret
+    attr_accessor :refresh_token
 
     def initialize
       @api_version = ENV["SALESFORCE_API_VERSION"] || "33.0"
@@ -16,6 +19,9 @@ class Bulkforce
       @host = ENV["SALESFORCE_HOST"] || "login.salesforce.com"
       @session_id = ENV["SALESFORCE_SESSION_ID"]
       @instance = ENV["SALESFORCE_INSTANCE"]
+      @client_id = ENV["SALESFORCE_CLIENT_ID"]
+      @client_secret = ENV["SALESFORCE_CLIENT_SECRET"]
+      @refresh_token = ENV["SALESFORCE_REFRESH_TOKEN"]
     end
 
     def to_h
@@ -27,6 +33,9 @@ class Bulkforce
         host: host,
         session_id: session_id,
         instance: instance,
+        client_id: client_id,
+        client_secret: client_secret,
+        refresh_token: refresh_token,
       }.reject { |_, v| v.nil? }.to_h
     end
   end
