@@ -2,9 +2,9 @@
 
 [![Build Status](https://travis-ci.org/propertybase/bulkforce.png?branch=master)](https://travis-ci.org/propertybase/bulkforce) [![Coverage Status](https://coveralls.io/repos/propertybase/bulkforce/badge.png?branch=master)](https://coveralls.io/r/propertybase/bulkforce) [![Code Climate](https://codeclimate.com/github/propertybase/bulkforce.png)](https://codeclimate.com/github/propertybase/bulkforce) [![Dependency Status](https://gemnasium.com/propertybase/bulkforce.png)](https://gemnasium.com/propertybase/bulkforce) [![Gem Version](https://badge.fury.io/rb/bulkforce.png)](http://badge.fury.io/rb/bulkforce)
 
-**Work in Progress**
-
 This is a fork of the originial [Executrix](http://github.com/propertybase/executrix) gem with some breaking API changes. In the long term, this gem will replace Executrix.
+
+It is a Ruby MRI 2.1+ gem only.
 
 ## Overview
 
@@ -18,24 +18,93 @@ $ sudo gem install bulkforce
 
 ## How to use
 
-Using this gem is simple and straight forward.
-
-### Initialize
+After requiring using this gem is simple and straight forward.
 
 ~~~ ruby
 require "bulkforce"
-salesforce = Bulkforce.new("YOUR_SALESFORCE_USERNAME", "YOUR_SALESFORCE_PASSWORD+YOUR_SALESFORCE_TOKEN")
 ~~~
 
-To use sandbox:
+### Authentication
+
+The authentication is heavily inspired by [Restforce](https://github.com/ejholmes/restforce)
+
+### Session ID and instance
+
+If you already have a session id and a instance you can directly authenticate against Salesforce:
 
 ~~~ ruby
-salesforce = Bulkforce.new("YOUR_SALESFORCE_SANDBOX_USERNAME", "YOUR_SALESFORCE_PASSWORD+YOUR_SALESFORCE_SANDBOX_TOKEN", true)
+salesforce = Bulkforce.new(
+  session_id: "YOUR_SESSION_ID",
+  instance: "YOUR_INSTANCE",
+)
 ~~~
 
-Note: the second parameter is a combination of your Salesforce token and password. So if your password is xxxx and your token is yyyy, the second parameter will be xxxxyyyy
+#### Username/Password/Security Token
 
-#### OrgId
+Bulkforce supports basic authentication via username, password and security token.
+
+~~~ ruby
+salesforce = Bulkforce.new(
+  username: "YOUR_SALESFORCE_USERNAME",
+  password: "YOUR_SALESFORCE_PASSWORD",
+  security_token: "YOUR_SALESFORCE_TOKEN,
+)
+~~~
+
+#### OAuth
+
+You can also authenticate via OAuth. Therefore you need the `client_id`, `client_secret` and `refresh_token`.
+
+~~~ ruby
+salesforce = Bulkforce.new(
+  client_id: "YOUR_CLIENT_ID",
+  client_secret: "YOUR_CLIENT_SECRET",
+  refresh_token: "YOUR_REFRESH_TOKEN,
+)
+~~~
+
+#### Priority
+
+If you define credentials for multiple authentication methods, the following priority applies:
+
+  - Session ID
+  - OAuth
+  - User/Password/Security Token
+
+#### ENV variables
+
+You can also define the credentials in Environment variables which are as following:
+
+~~~
+SALESFORCE_API_VERSION=...
+SALESFORCE_USERNAME=...
+SALESFORCE_PASSWORD=...
+SALESFORCE_SECURITY_TOKEN=...
+SALESFORCE_HOST=...
+SALESFORCE_CLIENT_ID=...
+SALESFORCE_CLIENT_SECRET=...
+SALESFORCE_INSTANCE=...
+SALESFORCE_REFRESH_TOKEN=...
+~~~
+
+Afterwards you can just instantiate the client:
+
+~~~ ruby
+Bulkforce.new
+~~~
+
+### Sandbox
+
+To use the bulkforce against your salesforce sandbox, change the host to `test.salesforce.com`
+
+~~~ ruby
+salesforce = Bulkforce.new(
+  # credentials
+  host: "test.salesforce.com",
+)
+~~~
+
+### OrgId
 
 After you created the client object you can fetch the OrgId via `org_id`.
 
@@ -139,4 +208,4 @@ puts "the results: #{results.inspect}"
 ## Copyright
 
 Copyright (c) 2012 Jorge Valdivia.
-Copyright (c) 2013 Leif Gensert, [Propertybase GmbH](http://propertybase.com)
+Copyright (c) 2015 Leif Gensert, [Propertybase GmbH](http://propertybase.com)
