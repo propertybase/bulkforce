@@ -16,4 +16,4 @@ matrix:
     - rvm: jruby-head
   fast_finish: true
 script:
-  - bundle exec rake spec
+  - bundle exec rspec --tag ~type:integration
