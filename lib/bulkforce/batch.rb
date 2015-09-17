@@ -39,9 +39,15 @@ class Bulkforce
     # results returned from Salesforce can be a single page id, or an array of ids.
     # if it"s an array of ids, we will fetch the results from each, and concatenate them.
     def results
-      Array(query_result_id).map do |result_id|
-        @connection.query_batch_result_data(@job_id, @batch_id, result_id)
-      end.flatten
+      queried_result_id = query_result_id
+
+      if queried_result_id && queried_result_id.any?
+        Array(query_result_id).map do |result_id|
+          @connection.query_batch_result_data(@job_id, @batch_id, result_id)
+        end.flatten
+      else
+        @connection.query_batch_result_id_csv(@job_id, @batch_id)
+      end
     end
 
     def raw_request
