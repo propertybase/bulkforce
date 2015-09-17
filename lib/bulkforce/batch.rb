@@ -41,7 +41,7 @@ class Bulkforce
     def results
       queried_result_id = query_result_id
 
-      if queried_result_id && queried_result_id.any?
+      if queried_result_id
         Array(query_result_id).map do |result_id|
           @connection.query_batch_result_data(@job_id, @batch_id, result_id)
         end.flatten
