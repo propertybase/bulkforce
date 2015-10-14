@@ -41,6 +41,11 @@ class Bulkforce
       process_xml_response(nori.parse(process_http_request(r)))
     end
 
+    def query_batch_result_id_csv *args
+      r = Http::Request.query_batch_result_id(*args)
+      normalize_csv(process_http_request(r))
+    end
+
     def query_batch_result_data *args
       r = Http::Request.query_batch_result_data(*args)
       normalize_csv(process_http_request(r))

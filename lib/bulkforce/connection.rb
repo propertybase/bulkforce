@@ -73,6 +73,17 @@ class Bulkforce
       )
     end
 
+    def query_batch_result_id_csv job_id, batch_id
+      @raw_result = Bulkforce::Http.query_batch_result_id_csv(
+        @instance,
+        @session_id,
+        job_id,
+        batch_id,
+        @api_version,
+      )
+      Bulkforce::Helper.parse_csv @raw_result
+    end
+
     def query_batch_result_data job_id, batch_id, result_id
       @raw_result = Bulkforce::Http.query_batch_result_data(
         @instance,
