@@ -4,10 +4,13 @@ class Bulkforce
   module Helper
     extend self
 
+    ENCODING = "utf-8"
+
     CSV_OPTIONS = {
       col_sep: ",",
       quote_char: "\"",
       force_quotes: true,
+      encoding: ENCODING,
     }
 
     def records_to_csv records
@@ -71,7 +74,7 @@ class Bulkforce
     end
 
     def parse_csv csv_string
-      CSV.parse(csv_string, headers: true).map{|r| r.to_hash}
+      CSV.parse(csv_string.force_encoding(ENCODING), headers: true).map{|r| r.to_hash}
     end
   end
 end
